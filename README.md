@@ -6,6 +6,8 @@ An Excel add-in that gives you a real code editor (Monaco, the engine behind VS 
 
 Works with **Microsoft 365 Excel**, A1 notation and US-English function names. Free and open source.
 
+![Cellsmith open beside a sales dashboard in Excel, showing a LET formula with MAP, LAMBDA and SORTBY formatted over 15 lines](docs/screenshots/excel.png)
+
 <table>
   <tr>
     <td width="50%"><img src="docs/screenshots/format.png" alt="A long LET formula pretty-printed with indentation and syntax colors"><br><b>Readable formulas.</b> One shortcut formats any formula.</td>

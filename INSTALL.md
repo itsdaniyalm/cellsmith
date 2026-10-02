@@ -88,6 +88,8 @@ A **Formula Editor** button now appears at the right-hand end of the **Home** ta
 3. Edit the formula in the panel. When it is valid, Cellsmith writes it back to the cell for you. Problems are listed under the editor while you type.
 4. Click another cell to edit its formula. The panel follows your selection.
 
+![Cellsmith panel open on the right of Excel, showing the selected cell's formula formatted over several lines](docs/screenshots/excel.png)
+
 Handy keys while you are in the panel:
 
 | Keys | What it does |
