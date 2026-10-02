@@ -1,0 +1,8 @@
+node_modules
+dist
+*.log
+.vite
+
+# generated per machine / per host
+manifest.xml
+.claude/

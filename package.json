@@ -1,0 +1,45 @@
+{
+  "name": "cellsmith",
+  "version": "0.1.0",
+  "description": "Excel add-in: VS Code-style formula editor (Monaco) with formatting, autocomplete and linting.",
+  "license": "MIT",
+  "author": "Muhammad Daniyal",
+  "keywords": [
+    "excel",
+    "office-addin",
+    "formula",
+    "editor",
+    "monaco",
+    "lambda",
+    "let"
+  ],
+  "engines": {
+    "node": ">=20.11"
+  },
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "icons": "node scripts/make-icons.mjs",
+    "manifest": "node scripts/make-manifest.mjs",
+    "certs": "office-addin-dev-certs install --days 365",
+    "sideload": "office-addin-debugging start manifest.xml desktop --app excel --no-debug",
+    "start:excel": "office-addin-debugging start manifest.xml desktop --app excel --no-debug --dev-server \"npm run dev\" --dev-server-port 3000",
+    "stop:excel": "office-addin-debugging stop manifest.xml"
+  },
+  "devDependencies": {
+    "@types/office-js": "^1.0.611",
+    "monaco-editor": "0.57.0",
+    "office-addin-debugging": "^7.0.1",
+    "office-addin-dev-certs": "^3.0.1",
+    "office-addin-manifest": "^3.0.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.2",
+    "vitest": "^5.0.3"
+  }
+}

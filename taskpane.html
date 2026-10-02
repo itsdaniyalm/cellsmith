@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cellsmith</title>
+    <!-- Office.js must come from Microsoft's CDN; outside Excel it simply reports no host. -->
+    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <header class="bar">
+        <div id="cell-chip" class="chip" title="Cell being edited">No cell</div>
+        <div id="badge" class="badge" data-phase="idle">Waiting</div>
+        <div class="spacer"></div>
+        <button id="btn-reload" class="icon" title="Reload from the cell and discard edits" aria-label="Reload from cell">&#x21bb;</button>
+        <button id="btn-settings" class="icon" title="Settings" aria-label="Settings" aria-expanded="false" aria-controls="settings">&#x2699;</button>
+      </header>
+
+      <section id="settings" class="settings" hidden>
+        <label>Line width
+          <select id="set-width">
+            <option value="auto">Fit pane</option>
+            <option value="60">60</option>
+            <option value="80">80</option>
+            <option value="100">100</option>
+            <option value="120">120</option>
+          </select>
+        </label>
+        <label>Indent
+          <select id="set-indent">
+            <option value="2">2 spaces</option>
+            <option value="4">4 spaces</option>
+          </select>
+        </label>
+        <label>Expand LET at
+          <select id="set-let">
+            <option value="1">1+ bindings</option>
+            <option value="2">2+ bindings</option>
+            <option value="3">3+ bindings</option>
+            <option value="999">Only when too long</option>
+          </select>
+        </label>
+        <label>Write to cell
+          <select id="set-write">
+            <option value="as-typed">As typed (keep layout)</option>
+            <option value="minified">Minified</option>
+          </select>
+        </label>
+        <label class="check"><input type="checkbox" id="set-upper" /> Upper-case function names</label>
+        <label class="check"><input type="checkbox" id="set-formatload" /> Pretty-print on cell select</label>
+      </section>
+
+      <div class="toolbar">
+        <button id="btn-format" title="Format (Shift+Alt+F)">Format</button>
+        <button id="btn-minify" title="Remove all whitespace">Minify</button>
+        <button id="btn-apply" class="primary" title="Write to the cell (Ctrl+Enter)">Apply</button>
+        <label class="toggle" title="Write to the cell automatically when the formula is valid">
+          <input type="checkbox" id="chk-auto" /> Auto
+        </label>
+      </div>
+
+      <div id="editor" class="editor" aria-label="Formula editor"></div>
+
+      <div id="result" class="result" hidden>
+        <span class="result-label">Result</span>
+        <span id="result-value" class="result-value"></span>
+      </div>
+
+      <section id="problems" class="problems" aria-live="polite" aria-label="Problems"></section>
+
+      <footer id="status" class="status"></footer>
+    </div>
+    <script type="module" src="/src/taskpane/main.ts"></script>
+  </body>
+</html>
