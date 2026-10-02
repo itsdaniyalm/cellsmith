@@ -4,5 +4,5 @@ dist
 .vite
 
 # generated per machine / per host
-manifest.xml
+/manifest.xml
 .claude/
