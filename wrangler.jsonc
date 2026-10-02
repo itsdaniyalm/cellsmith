@@ -1,0 +1,9 @@
+{
+  // Cloudflare static hosting: the build output in dist/ is served as-is.
+  // The deploy command (npx wrangler deploy) runs after "npm run build".
+  "name": "cellsmith",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist"
+  }
+}
