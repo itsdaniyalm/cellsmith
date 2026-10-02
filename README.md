@@ -61,6 +61,16 @@ Line width (fit pane / fixed), indent, when `LET` expands, pretty-print on cell 
 - Multi-cell selections edit the first cell.
 - If Excel is in cell-edit mode, writes are retried automatically.
 
+## Install the hosted version
+
+A hosted copy runs at **https://cellsmith.itsdaniyalm.workers.dev**, so you do not need Node or any build tooling. You only need its manifest, which is at https://cellsmith.itsdaniyalm.workers.dev/manifest.xml (also in this repo as `public/manifest.xml`). Updates are picked up automatically: the add-in is loaded from the host each time.
+
+- **Excel on the web:** *Insert → Add-ins → My Add-ins → Manage My Add-ins → Upload My Add-in*, then choose the downloaded `manifest.xml`.
+- **Excel on Windows:** the desktop app has no upload button for personal add-ins. Either add a folder as a *Trusted Add-in Catalog* (*File → Options → Trust Center → Trust Center Settings → Trusted Add-in Catalogs*, using a network-share path), or, from a clone of this repo, register it once with `npx office-addin-dev-settings sideload public/manifest.xml`.
+- **Excel on Mac:** copy `manifest.xml` into `~/Library/Containers/com.microsoft.Excel/Data/Documents/wef`.
+
+Microsoft's guide to [sideloading Office Add-ins](https://learn.microsoft.com/office/dev/add-ins/testing/test-debug-office-add-ins) has the current, detailed steps for each platform. To deploy to a whole organization instead, upload the manifest in the Microsoft 365 admin center.
+
 ## Building and hosting
 
 ```bash
@@ -72,6 +82,7 @@ npm test               # 277 unit tests
 
 ```bash
 npm run manifest -- https://your-host.example/cellsmith dist/manifest.xml
+# Cloudflare serves the page at /taskpane (no .html); pass the page path as a third argument if your host differs
 ```
 
 Users sideload that manifest or you deploy it through the Microsoft 365 admin center. Publishing publicly on AppSource additionally needs Microsoft validation, a privacy policy and a support page. The manifest ID in `manifest.template.xml` should stay stable once you ship.

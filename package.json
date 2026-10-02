@@ -38,7 +38,8 @@
     "certs": "office-addin-dev-certs install --days 365",
     "sideload": "office-addin-debugging start manifest.xml desktop --app excel --no-debug",
     "start:excel": "office-addin-debugging start manifest.xml desktop --app excel --no-debug --dev-server \"npm run dev\" --dev-server-port 3000",
-    "stop:excel": "office-addin-debugging stop manifest.xml"
+    "stop:excel": "office-addin-debugging stop manifest.xml",
+    "manifest:prod": "node scripts/make-manifest.mjs https://cellsmith.itsdaniyalm.workers.dev public/manifest.xml taskpane"
   },
   "devDependencies": {
     "@resvg/resvg-js": "^2.6.2",

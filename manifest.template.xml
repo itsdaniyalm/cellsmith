@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Add-in manifest template. Generate the real manifest with "npm run manifest".
-  Arguments go after a double dash: base URL first, output file second.
+  Arguments go after a double dash: base URL, output file, then the path of the task pane page.
   With no arguments it targets https://localhost:3000 and writes manifest.xml (development).
   BASE_URL below is replaced with the address the built files are served from, with no trailing slash.
+  PANE_URL is BASE_URL plus the task pane path (/taskpane.html by default).
 -->
 <OfficeApp
   xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
@@ -20,7 +21,7 @@
   <Description DefaultValue="Write Excel formulas in a real code editor: auto-format, autocomplete, argument hints and live error checking."/>
   <IconUrl DefaultValue="${BASE_URL}/assets/icon-32.png"/>
   <HighResolutionIconUrl DefaultValue="${BASE_URL}/assets/icon-64.png"/>
-  <SupportUrl DefaultValue="${BASE_URL}/taskpane.html"/>
+  <SupportUrl DefaultValue="${BASE_URL}/"/>
 
   <Hosts>
     <Host Name="Workbook"/>
@@ -32,7 +33,7 @@
     </Sets>
   </Requirements>
   <DefaultSettings>
-    <SourceLocation DefaultValue="${BASE_URL}/taskpane.html"/>
+    <SourceLocation DefaultValue="${PANE_URL}"/>
   </DefaultSettings>
   <Permissions>ReadWriteDocument</Permissions>
 
@@ -85,7 +86,7 @@
         <bt:Image id="Icon.80x80" DefaultValue="${BASE_URL}/assets/icon-80.png"/>
       </bt:Images>
       <bt:Urls>
-        <bt:Url id="Taskpane.Url" DefaultValue="${BASE_URL}/taskpane.html"/>
+        <bt:Url id="Taskpane.Url" DefaultValue="${PANE_URL}"/>
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="GetStarted.Title" DefaultValue="Cellsmith is ready"/>
