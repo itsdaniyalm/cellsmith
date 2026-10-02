@@ -19,6 +19,12 @@
       a { color: var(--accent); }
       ul { padding-left: 1.2rem; }
       code { background: color-mix(in srgb, var(--fg) 8%, transparent); padding: 0.1em 0.35em; border-radius: 4px; }
+      .download { display: inline-block; margin: 0.5rem 0 0.25rem; padding: 0.75rem 1.4rem; border-radius: 8px; background: var(--accent); color: var(--bg); font-weight: 600; text-decoration: none; }
+      .download:hover { filter: brightness(1.08); }
+      .note { color: var(--muted); font-size: 0.9rem; margin-top: 0.25rem; }
+      h2 { margin: 2rem 0 0.5rem; font-size: 1.25rem; }
+      ol { padding-left: 1.3rem; }
+      li { margin: 0.2rem 0; }
       footer { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85rem; }
     </style>
   </head>
@@ -29,15 +35,23 @@
       <p class="lead">A code editor for Excel formulas, in a side pane synced to the selected cell.</p>
       <ul>
         <li>Auto-format deeply nested formulas, including <code>LET</code> and <code>LAMBDA</code></li>
-        <li>Autocomplete and argument hints for ~480 functions, tables, names and variables</li>
+        <li>Autocomplete and argument hints for 500+ functions, tables, names and variables</li>
         <li>Live error checking before Excel rejects the formula</li>
         <li>Runs entirely in your Excel. No workbook data is sent anywhere.</li>
       </ul>
-      <p>
-        <a href="https://github.com/itsdaniyalm/cellsmith#install-the-hosted-version">How to install</a> &middot;
-        <a href="/manifest.xml">Add-in manifest</a> &middot;
-        <a href="https://github.com/itsdaniyalm/cellsmith">Source on GitHub</a>
-      </p>
+      <h2>Install</h2>
+      <a class="download" href="/manifest.xml" download="manifest.xml">Download manifest</a>
+      <p class="note">A small file that tells Excel where Cellsmith lives. It contains no program code. Requires Microsoft 365 Excel.</p>
+      <p><strong>Excel on Windows</strong></p>
+      <ol>
+        <li>Put <code>manifest.xml</code> in a new folder, for example <code>C:\CellsmithAddin</code>.</li>
+        <li>Share that folder with yourself (right-click &rarr; Properties &rarr; Sharing &rarr; Share) and copy its network path, like <code>\\YOUR-PC\CellsmithAddin</code>.</li>
+        <li>In Excel: File &rarr; Options &rarr; Trust Center &rarr; Trust Center Settings &rarr; Trusted Add-in Catalogs. Paste the path, click Add catalog, tick Show in Menu, then restart Excel.</li>
+        <li>Home &rarr; Add-ins &rarr; More Add-ins &rarr; <strong>Shared Folder</strong> &rarr; Cellsmith &rarr; Add.</li>
+      </ol>
+      <p><strong>Excel on the web:</strong> Home &rarr; Add-ins &rarr; More Add-ins &rarr; My Add-ins &rarr; Upload My Add-in, then choose the file.</p>
+      <p><a href="https://github.com/itsdaniyalm/cellsmith/blob/main/INSTALL.md">Full step-by-step guide</a> (Windows, web and Mac, with troubleshooting) &middot;
+        <a href="https://github.com/itsdaniyalm/cellsmith">Source on GitHub</a></p>
       <footer>
         Open source under the MIT license. Not affiliated with or endorsed by Microsoft.
       </footer>

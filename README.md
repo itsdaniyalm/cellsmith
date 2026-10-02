@@ -4,14 +4,33 @@
 
 An Excel add-in that gives you a real code editor (Monaco, the engine behind VS Code) for writing formulas: auto-format, autocomplete, argument hints, and live error checking, in a side pane that stays in sync with the selected cell.
 
-Targets **Microsoft 365 Excel** (desktop and web), A1 notation, US-English function names.
+Works with **Microsoft 365 Excel**, A1 notation and US-English function names. Free and open source.
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/format.png" alt="A long LET formula pretty-printed with indentation and syntax colors"><br><b>Readable formulas.</b> One shortcut formats any formula.</td>
+    <td width="50%"><img src="docs/screenshots/autocomplete.png" alt="Autocomplete listing XLOOKUP, XMATCH, XIRR, XNPV and XOR"><br><b>Autocomplete</b> for 500+ functions, names and tables.</td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/hints.png" alt="Argument hints for XLOOKUP with return_array highlighted"><br><b>Argument hints</b> show where you are in the function.</td>
+    <td width="50%"><img src="docs/screenshots/errors.png" alt="Squiggles and a problems list for a misspelled function, a missing argument and an undefined name"><br><b>Mistakes flagged</b> before Excel sees them.</td>
+  </tr>
+</table>
+
+## Install
+
+**No coding needed.** You download one small file and point Excel at it; it takes about 5 minutes, once.
+
+**[Step-by-step install guide for Windows, web and Mac →](INSTALL.md)**
+
+The add-in is hosted at [cellsmith.itsdaniyalm.workers.dev](https://cellsmith.itsdaniyalm.workers.dev) and updates itself: Excel loads the latest version each time you open the pane. Running a team? Your Microsoft 365 admin can deploy it to everyone from the admin center with the same file.
 
 ## What you get
 
 | | |
 |---|---|
 | **Readable formulas** | Pretty-prints nested formulas with indentation that fits the pane width. `LET` is expanded one binding per line; `LAMBDA` keeps parameters together. Syntax coloring, rainbow brackets, indent guides, folding. |
-| **No syntax lookups** | Autocomplete for ~480 functions with snippet placeholders (Tab through the arguments), signature help with the active parameter highlighted, hover docs. Also completes `LET` variables, `LAMBDA` parameters, defined names, **named LAMBDAs**, sheets, tables and table columns (`Sales[`). |
+| **No syntax lookups** | Autocomplete for 500+ functions with snippet placeholders (Tab through the arguments), signature help with the active parameter highlighted, hover docs. Also completes `LET` variables, `LAMBDA` parameters, defined names, **named LAMBDAs**, sheets, tables and table columns (`Sales[`). |
 | **Errors caught early** | Live diagnostics: syntax errors, wrong argument counts, unknown functions (with "did you mean"), undefined names, unreplaced snippet placeholders, unused `LET` variables (faded), `#REF!`, divide by zero, array constant mistakes, and Excel's hard limits (8,192 characters, 64 nesting levels, 255 arguments). Quick fixes via <kbd>Ctrl</kbd>+<kbd>.</kbd>. |
 | **Refactoring** | <kbd>F2</kbd> renames a `LET` variable or `LAMBDA` parameter everywhere; <kbd>Ctrl</kbd>+click jumps to its definition. |
 | **Two-way sync** | Select a cell and its formula loads into the editor. Edits are written back automatically once the formula is valid (Excel rejects malformed formulas, so invalid edits are never sent). |
@@ -27,7 +46,30 @@ Targets **Microsoft 365 Excel** (desktop and web), A1 notation, US-English funct
 | <kbd>F2</kbd> | Rename variable |
 | <kbd>F1</kbd> | Command palette (includes *Minify Formula*) |
 
-## Running it
+### Settings (⚙ in the pane)
+
+Line width (fit pane / fixed), indent, when `LET` expands, pretty-print on cell select, upper-case function names, and **write mode**: *as typed* keeps your layout in the cell's formula bar; *minified* strips whitespace on write.
+
+## How the sync behaves
+
+- Loading never writes. Pretty-printing a formula on select only changes the editor; the cell changes when **you** edit.
+- Formulas you have already laid out over several lines are left alone.
+- If you change selection with a pending valid edit, it is flushed to the **previous** cell first. A pending edit that still has errors is discarded, and the status line says so.
+- Multi-cell selections edit the first cell.
+- If Excel is in cell-edit mode, writes are retried automatically.
+
+## Known limitations
+
+- **Tested on Excel for Windows (Microsoft 365).** Excel on the web and on Mac should work but have not been tried yet; reports are welcome.
+- Excel 365 only: no R1C1 notation, no localized function names or separators, and no compatibility warnings for older Excel versions.
+- The function catalog is hand-written and covers functions through 2025; brand-new functions need adding to `functionData.ts`. Unknown functions are reported as warnings, never blocked.
+- Lint is structural: it checks names, scoping and argument counts, not argument *types* or values.
+- Cells inside a dynamic-array spill range show their values, not the anchor's formula; select the anchor cell to edit.
+- Legacy Ctrl+Shift+Enter array formulas (`{=...}`) are not specially handled.
+
+## For developers
+
+### Running it locally
 
 Requirements: Node 20+, Microsoft 365 Excel on Windows (uses the WebView2 runtime).
 
@@ -49,29 +91,7 @@ If you prefer to do it in two steps: `npm run dev` in one terminal, `npm run sid
 
 The dev certificate is created for 365 days (`office-addin-dev-certs` defaults to 30). After it expires, rerun `npm run certs`.
 
-### Settings (⚙ in the pane)
-
-Line width (fit pane / fixed), indent, when `LET` expands, pretty-print on cell select, upper-case function names, and **write mode**: *as typed* keeps your layout in the cell's formula bar; *minified* strips whitespace on write.
-
-## How the sync behaves
-
-- Loading never writes. Pretty-printing a formula on select only changes the editor; the cell changes when **you** edit.
-- Formulas you have already laid out over several lines are left alone.
-- If you change selection with a pending valid edit, it is flushed to the **previous** cell first. A pending edit that still has errors is discarded, and the status line says so.
-- Multi-cell selections edit the first cell.
-- If Excel is in cell-edit mode, writes are retried automatically.
-
-## Install the hosted version
-
-A hosted copy runs at **https://cellsmith.itsdaniyalm.workers.dev**, so you do not need Node or any build tooling. You only need its manifest, which is at https://cellsmith.itsdaniyalm.workers.dev/manifest.xml (also in this repo as `public/manifest.xml`). Updates are picked up automatically: the add-in is loaded from the host each time.
-
-- **Excel on the web:** *Insert → Add-ins → My Add-ins → Manage My Add-ins → Upload My Add-in*, then choose the downloaded `manifest.xml`.
-- **Excel on Windows:** the desktop app has no upload button for personal add-ins. Either add a folder as a *Trusted Add-in Catalog* (*File → Options → Trust Center → Trust Center Settings → Trusted Add-in Catalogs*, using a network-share path), or, from a clone of this repo, register it once with `npx office-addin-dev-settings sideload public/manifest.xml`.
-- **Excel on Mac:** copy `manifest.xml` into `~/Library/Containers/com.microsoft.Excel/Data/Documents/wef`.
-
-Microsoft's guide to [sideloading Office Add-ins](https://learn.microsoft.com/office/dev/add-ins/testing/test-debug-office-add-ins) has the current, detailed steps for each platform. To deploy to a whole organization instead, upload the manifest in the Microsoft 365 admin center.
-
-## Building and hosting
+### Building and hosting
 
 ```bash
 npm run build          # type-checks, then bundles to dist/
@@ -89,7 +109,7 @@ Users sideload that manifest or you deploy it through the Microsoft 365 admin ce
 
 The bundle is about 3.6 MB (920 KB gzipped): Monaco is imported selectively (`src/editor/monaco.ts`) so none of its 80+ bundled languages are included. Those are deep imports into `monaco-editor`'s ESM sources, so the version is pinned exactly; when upgrading, compare against `monaco-editor/esm/vs/editor/editor.main.js`.
 
-## Project layout
+### Project layout
 
 ```
 src/core/       Pure TypeScript, no browser or Excel dependencies (fully unit-tested)
@@ -106,14 +126,9 @@ src/taskpane/   The pane UI
 tests/          Vitest suites
 ```
 
-## Known limitations
+### Releasing a hosted copy
 
-- **Not yet exercised inside a real Excel session.** The editor, linter, formatter and sync logic are tested (unit tests, plus the editor driven in a browser against a mock workbook), but the Office.js adapter (`src/excel/office.ts`) has only been type-checked against the Office typings. See the checklist below.
-- Excel 365 only: no R1C1 notation, no localized function names or separators, and no compatibility warnings for older Excel versions.
-- The function catalog is hand-written and covers functions through 2025; brand-new functions need adding to `functionData.ts`. Unknown functions are reported as warnings, never blocked.
-- Lint is structural: it checks names, scoping and argument counts, not argument *types* or values.
-- Cells inside a dynamic-array spill range show their values, not the anchor's formula; select the anchor cell to edit.
-- Legacy Ctrl+Shift+Enter array formulas (`{=...}`) are not specially handled.
+The production manifest is `public/manifest.xml` (served at `/manifest.xml`); regenerate it with `npm run manifest:prod`. Cloudflare rebuilds and redeploys the site on every push to `main`. For local sideloading on Windows without the Trust Center steps, `npx office-addin-dev-settings register public/manifest.xml` registers the hosted manifest.
 
 ### First-run checklist (things to confirm in Excel)
 
