@@ -4,6 +4,14 @@
   "description": "Excel add-in: VS Code-style formula editor (Monaco) with formatting, autocomplete and linting.",
   "license": "MIT",
   "author": "Muhammad Daniyal",
+  "homepage": "https://github.com/itsdaniyalm/cellsmith#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itsdaniyalm/cellsmith.git"
+  },
+  "bugs": {
+    "url": "https://github.com/itsdaniyalm/cellsmith/issues"
+  },
   "keywords": [
     "excel",
     "office-addin",
