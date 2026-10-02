@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <title>Cellsmith</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2B9E69"/>
+      <stop offset="1" stop-color="#175F3F"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+  <!-- grid hint: a faint cell edge behind the brackets -->
+  <path d="M16 64H112M64 16V112" stroke="#ffffff" stroke-opacity="0.07" stroke-width="2"/>
+  <!-- parentheses -->
+  <g fill="none" stroke="#ffffff" stroke-width="11" stroke-linecap="round">
+    <path d="M51 27C27 45 27 83 51 101"/>
+    <path d="M77 27C101 45 101 83 77 101"/>
+  </g>
+  <!-- spark -->
+  <path d="M64 44C66 55 71 62 82 64C71 66 66 73 64 84C62 73 57 66 46 64C57 62 62 55 64 44Z" fill="#FFC83D"/>
+</svg>

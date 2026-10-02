@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <title>Cellsmith (small sizes)</title>
+  <!-- Simplified for 16 and 32 px: heavier strokes, no grid hint, larger spark, flat fill. -->
+  <rect width="128" height="128" rx="24" fill="#1F7F52"/>
+  <g fill="none" stroke="#ffffff" stroke-width="16" stroke-linecap="round">
+    <path d="M47 22C20 44 20 84 47 106"/>
+    <path d="M81 22C108 44 108 84 81 106"/>
+  </g>
+  <path d="M64 38C66 54 72 62 90 64C72 66 66 74 64 90C62 74 56 66 38 64C56 62 62 54 64 38Z" fill="#FFC83D"/>
+</svg>

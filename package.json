@@ -41,6 +41,7 @@
     "stop:excel": "office-addin-debugging stop manifest.xml"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "@types/office-js": "^1.0.611",
     "monaco-editor": "0.57.0",
     "office-addin-debugging": "^7.0.1",

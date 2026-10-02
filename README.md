@@ -1,3 +1,5 @@
+<p align="center"><img src="assets/icon-128.png" alt="Cellsmith icon" width="96" height="96"></p>
+
 # Cellsmith
 
 An Excel add-in that gives you a real code editor (Monaco, the engine behind VS Code) for writing formulas: auto-format, autocomplete, argument hints, and live error checking, in a side pane that stays in sync with the selected cell.
