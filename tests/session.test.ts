@@ -14,6 +14,9 @@ class MockAdapter implements WorkbookAdapter {
   writes: { target: CellTarget; text: string }[] = [];
   busyWrites = 0;
   rejectNext?: string;
+  /** Reject every write, and fire a selection-changed event afterwards, as Excel can. */
+  rejectAll?: string;
+  attempts = 0;
 
   set(addr: string, text: string) {
     this.cells.set(addr, text);
@@ -30,6 +33,11 @@ class MockAdapter implements WorkbookAdapter {
     this.handler = h;
   }
   async write(target: CellTarget, text: string) {
+    this.attempts++;
+    if (this.rejectAll) {
+      setTimeout(() => this.handler?.(), 0);
+      throw new Error(this.rejectAll);
+    }
     if (this.busyWrites > 0) {
       this.busyWrites--;
       throw new BusyError();
@@ -255,6 +263,52 @@ describe('Session', () => {
     expect(t.last()).toMatchObject({ phase: 'error', message: 'Excel rejected the formula.' });
     expect(t.editor()).toBe('=2');
     expect(t.session.isDirty()).toBe(true);
+  });
+
+  it('does not resend a rejected formula when Excel fires selection events after the rejection', async () => {
+    const t = setup();
+    t.adapter.set('A1', '=1');
+    await t.session.start();
+    t.adapter.rejectAll = 'Excel rejected the formula.';
+    t.type('=ROWS(Sales[])');
+    await vi.advanceTimersByTimeAsync(10_000);
+    expect(t.adapter.attempts).toBe(1);
+    expect(t.last()).toMatchObject({ phase: 'error' });
+    expect(t.editor()).toBe('=ROWS(Sales[])');
+  });
+
+  it('tries again after a rejected formula is edited, or applied explicitly', async () => {
+    const t = setup();
+    t.adapter.set('A1', '=1');
+    await t.session.start();
+    t.adapter.rejectNext = 'Excel rejected the formula.';
+    t.type('=2');
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(t.last().phase).toBe('error');
+    t.type('=3');
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(t.adapter.writes.map((w) => w.text)).toEqual(['=3']);
+
+    t.adapter.rejectNext = 'Excel rejected the formula.';
+    t.type('=4');
+    await vi.advanceTimersByTimeAsync(1000);
+    await t.session.applyNow();
+    expect(t.adapter.writes.map((w) => w.text)).toEqual(['=3', '=4']);
+  });
+
+  it('discards a rejected edit when moving to another cell, and says so', async () => {
+    const t = setup();
+    t.adapter.set('A1', '=1');
+    t.adapter.set('B1', '=2');
+    await t.session.start();
+    t.adapter.rejectNext = 'Excel rejected the formula.';
+    t.type('=9');
+    await vi.advanceTimersByTimeAsync(1000);
+    t.adapter.select('B1');
+    await vi.advanceTimersByTimeAsync(10);
+    expect(t.adapter.attempts).toBe(1);
+    expect(t.editor()).toBe('=2');
+    expect(t.last()).toMatchObject({ phase: 'synced', message: 'Discarded an edit to A1 that Excel rejected.' });
   });
 
   it('reverting to the original text is not an edit', async () => {

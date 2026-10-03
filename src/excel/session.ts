@@ -60,6 +60,8 @@ export class Session {
   private timer?: ReturnType<typeof setTimeout>;
   private chain: Promise<void> = Promise.resolve();
   private lastWorkbookRefresh = 0;
+  /** The last text Excel refused for a cell. It is never resent automatically, only after a new edit or an explicit Apply. */
+  private rejected?: { target: CellTarget; text: string };
 
   constructor(private readonly deps: SessionDeps) {}
 
@@ -139,10 +141,15 @@ export class Session {
     this.deps.onState(this.state);
   }
 
+  /** The editor holds exactly the text Excel last rejected for this cell. */
+  private isRejected(): boolean {
+    return !!this.rejected && sameTarget(this.rejected.target, this.target) && this.rejected.text === this.deps.getText();
+  }
+
   /** Write a valid pending edit to its cell, or report why it was dropped. */
   private async flush(): Promise<void> {
     clearTimeout(this.timer);
-    if (!this.target || !this.isDirty()) return;
+    if (!this.target || !this.isDirty() || this.isRejected()) return;
     if (this.deps.countErrors(this.deps.getText()) === 0) {
       await this.apply();
     } else {
@@ -152,7 +159,7 @@ export class Session {
 
   /** Timer callbacks run later, by which time the selection may have moved on and the text been replaced. */
   private async applyIfDirty(): Promise<void> {
-    if (this.isDirty()) await this.apply();
+    if (this.isDirty() && !this.isRejected()) await this.apply();
   }
 
   private async apply(): Promise<void> {
@@ -163,6 +170,7 @@ export class Session {
     try {
       const display = await this.deps.adapter.write(target, this.cellText());
       this.baseline = snapshot;
+      this.rejected = undefined;
       this.emit({ phase: 'applied', display, message: 'Applied.' });
       // The user kept typing while the write was in flight.
       if (this.isDirty()) this.handleEdit();
@@ -171,12 +179,16 @@ export class Session {
         this.emit({ phase: 'busy', message: err.message });
         this.timer = setTimeout(() => void this.enqueue(() => this.applyIfDirty()), BUSY_RETRY_MS);
       } else {
+        // Excel can fire selection-changed after refusing a write; remembering the refusal stops
+        // the selection handler's flush from resending the same text in a loop.
+        this.rejected = { target, text: snapshot };
         this.emit({ phase: 'error', message: err instanceof Error ? err.message : String(err) });
       }
     }
   }
 
   private async load(force = false): Promise<void> {
+    const leavingRejected = !force && this.isDirty() && this.isRejected() ? this.target : undefined;
     if (!force) await this.flush();
     let sel;
     try {
@@ -189,6 +201,7 @@ export class Session {
     if (!force && sameTarget(this.target, sel.target) && this.isDirty()) return;
 
     this.target = sel.target;
+    this.rejected = undefined;
     let shown = sel.text;
     if (this.deps.settings().formatOnLoad && sel.isFormula && !sel.text.includes('\n')) {
       shown = this.deps.format(sel.text) ?? sel.text;
@@ -199,7 +212,11 @@ export class Session {
       phase: 'synced',
       cellCount: sel.cellCount,
       display: sel.display,
-      message: sel.cellCount > 1 ? `Editing the first of ${sel.cellCount} selected cells.` : '',
+      message: leavingRejected
+        ? `Discarded an edit to ${leavingRejected.address} that Excel rejected.`
+        : sel.cellCount > 1
+          ? `Editing the first of ${sel.cellCount} selected cells.`
+          : '',
     });
   }
 }

@@ -244,3 +244,15 @@ describe('linter: misc rules', () => {
     expect(a.diagnostics.map((d) => d.code)).toContain('syntax.unclosed-paren');
   });
 });
+
+describe('linter: structured references', () => {
+  it('rejects empty brackets with no table name, but allows Table[]', () => {
+    expect(codes('=ROWS([])')).toContain('ref.empty-structured');
+    expect(codes('=ROWS([ ])')).toContain('ref.empty-structured');
+    expect(codes('=ROWS(Sales[])')).not.toContain('ref.empty-structured');
+    expect(codes('=[@Units]*2')).not.toContain('ref.empty-structured');
+    expect(codes('=LAMBDA(x, [y], x)(1)')).not.toContain('ref.empty-structured');
+    const d = analyze('=ROWS([])').diagnostics.find((x) => x.code === 'ref.empty-structured')!;
+    expect(d.severity).toBe('error');
+  });
+});

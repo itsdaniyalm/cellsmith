@@ -278,6 +278,15 @@ export function analyze(src: string, ctx: LintContext = {}): Analysis {
             start: node.start,
             end: node.end,
           });
+        } else if (node.kind === 'table' && /^\[\s*\]$/.test(node.body)) {
+          // `Sales[]` is valid (the whole table), but brackets with no table name and nothing inside are not.
+          add({
+            severity: 'error',
+            code: 'ref.empty-structured',
+            message: 'Empty brackets: put a column name inside, like [@Units], or a table name in front, like Sales[].',
+            start: node.start,
+            end: node.end,
+          });
         } else if (node.kind === 'name' && !node.prefix && !placeholders.has(node)) {
           const sym = resolve(scopes, node.text);
           if (sym) {
